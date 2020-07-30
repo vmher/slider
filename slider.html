@@ -1,0 +1,180 @@
+<style>
+  /**/
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  body,
+  .slider-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  .slider {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 600px;
+    overflow: hidden;
+  }
+  .left-arrow,
+  .right-arrow {
+    font-size: 56px;
+    cursor: pointer;
+    z-index: 9;
+    top: 50%;
+  }
+  .left-arrow {
+    left: 20px;
+    visibility: visible;
+  }
+  .right-arrow {
+    right: 20px;
+    visibility: visible;
+  }
+  .slider-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: -50%;
+    position: relative;
+    transition: 0.3s;
+    left: 0;
+  }
+  .slider-item {
+    padding: 10px;
+    width: 300px;
+  }
+  .pagination {
+    visibility: hidden;
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+  }
+  .pagination-item {
+    width: 10px;
+    height: 10px;
+    background-color: #000;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    margin: 2px;
+    cursor: pointer;
+  }
+  /**/
+</style>
+<body>
+  <!--  -->
+  <div class="slider-wrapper">
+    <div class="left-arrow">&#11164;</div>
+    <div class="slider">
+      <div class="slider-items"></div>
+    </div>
+    <div class="right-arrow">&#11166;</div>
+    <div class="pagination"></div>
+  </div>
+  <!--  -->
+  <script>
+    //
+    //
+    (function () {
+      var photos = [
+        "https://images.unsplash.com/photo-1583611191427-0c13a5a78e13?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
+        "https://images.unsplash.com/photo-1582216334598-8d164f53644f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=329&q=80",
+        "https://images.unsplash.com/photo-1595766711576-393e79ec6302?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80",
+        "https://images.unsplash.com/photo-1519962551779-514fa155be9a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=332&q=80",
+        "https://images.unsplash.com/photo-1528058340-31f0d44d46da?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
+        "https://images.unsplash.com/photo-1595579112202-93e076b1f075?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80",
+      ];
+
+      slider(photos, 3);
+    })();
+
+    function slider(photos, itemsPerSlide) {
+      var leftArrow = document.querySelector(".left-arrow");
+      var rightArrow = document.querySelector(".right-arrow");
+      var sliderItems = document.querySelector(".slider-items");
+      var slider = document.querySelector(".slider");
+
+      if (itemsPerSlide === 1) {
+        var pagination = document.querySelector(".pagination");
+        var paginationItem = `<div class="pagination-item"></div>`;
+        var pages = [];
+
+        for (let x = 0; x < photos.length; x++) {
+          sliderItems.innerHTML += `<div class="slider-item"><img src='${photos[x]}' width='100%' /></div>`;
+          pagination.innerHTML += paginationItem;
+          pages.push(x);
+        }
+
+        leftArrow.style.visibility = "hidden";
+        rightArrow.style.visibility = "hidden";
+        pagination.style.visibility = "visible";
+
+        var paginationItems = document.querySelectorAll(".pagination-item");
+        var sliderItem = document.querySelector(".slider-item");
+        var sliderItemWidth = parseInt(getComputedStyle(sliderItem).width);
+        var sliderWidth = (slider.style.width =
+          sliderItemWidth * itemsPerSlide);
+        var sliderItemsWidth = sliderItemWidth * photos.length;
+        var slideWidth = 0;
+
+        for (let x = 0; x < pages.length; x++) {
+          pages[x] = -(sliderItemWidth * pages[x]);
+        }
+
+        for (let x = 0; x < paginationItems.length; x++) {
+          paginationItems[x].onclick = function () {
+            sliderItems.style.left = pages[x];
+          };
+        }
+
+        rightArrow.onclick = function () {
+          var sliderItemsLeft = parseInt(getComputedStyle(sliderItems).left);
+
+          if (sliderItemsLeft != -(sliderItemsWidth - sliderWidth)) {
+            slideWidth -= sliderItemWidth;
+            sliderItems.style.left = slideWidth;
+          }
+        };
+
+        // setInterval(function () {
+        //   rightArrow.click();
+        // }, 3000);
+      } else if (itemsPerSlide > 1) {
+        for (let x = 0; x < photos.length; x++) {
+          sliderItems.innerHTML += `<div class="slider-item"><img src='${photos[x]}' width='100%' /></div>`;
+        }
+
+        var sliderItem = document.querySelector(".slider-item");
+        var sliderItemWidth = parseInt(getComputedStyle(sliderItem).width);
+        var sliderWidth = (slider.style.width =
+          sliderItemWidth * itemsPerSlide);
+        var sliderItemsWidth = sliderItemWidth * photos.length;
+        var slideWidth = 0;
+
+        rightArrow.onclick = function () {
+          var sliderItemsLeft = parseInt(getComputedStyle(sliderItems).left);
+
+          if (sliderItemsLeft != -(sliderItemsWidth - sliderWidth)) {
+            slideWidth -= sliderItemWidth;
+            sliderItems.style.left = slideWidth;
+          }
+        };
+
+        leftArrow.onclick = function () {
+          var sliderItemsLeft = parseInt(getComputedStyle(sliderItems).left);
+
+          if (sliderItemsLeft < 0) {
+            slideWidth += sliderItemWidth;
+            sliderItems.style.left = slideWidth;
+          }
+        };
+      }
+    }
+
+    //
+    //
+  </script>
+</body>
